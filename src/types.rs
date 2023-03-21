@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 #[serde(tag = "type")]
 pub enum SimpleImportSpecifier {
   #[serde(rename = "ImportDefaultSpecifier")]
-  DefaultImport(DefaultImportName),
+  DefaultImport(ImportDefaultName),
 
   #[serde(rename = "ImportSpecifier")]
   NamedImport(NamedImportName),
@@ -19,7 +19,7 @@ pub enum SimpleImportSpecifier {
 #[serde(tag = "type")]
 pub enum SimpleExportSpecifier {
   #[serde(rename = "ExportDefaultSpecifier")]
-  DefaultImport(DefaultImportName),
+  DefaultImport(ExportDefaultName),
 
   #[serde(rename = "ExportNamespaceSpecifier")]
   NamespaceExport(ExportNamespaceSpecifier),
@@ -53,8 +53,13 @@ pub struct DynamicName {}
 // export x from 'y'
 // export { default } from 'y'
 #[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct DefaultImportName {
+pub struct ImportDefaultName {
   pub local: Option<String>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct ExportDefaultName {
+  pub exported: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]

@@ -1,6 +1,6 @@
 use crate::dynamic_import_visitor::DynamicImportVisitor;
 use crate::types::{
-  DefaultImportName, ExportNamespaceSpecifier, NamedImportName, NamespaceName,
+  ExportDefaultName, ExportNamespaceSpecifier, ImportDefaultName, NamedImportName, NamespaceName,
   SimpleExportSpecifier, SimpleImportSpecifier,
 };
 use serde::{Deserialize, Serialize};
@@ -108,7 +108,7 @@ pub fn extract_module_imports(module: &mut Module) -> Vec<DeclareType> {
         }
         // import x from 'y'
         ImportSpecifier::Default(default_specifier) => {
-          my_specifiers.push(SimpleImportSpecifier::DefaultImport(DefaultImportName {
+          my_specifiers.push(SimpleImportSpecifier::DefaultImport(ImportDefaultName {
             local: Some(default_specifier.local.sym.to_string()),
           }));
         }
@@ -140,7 +140,6 @@ pub fn extract_module_imports(module: &mut Module) -> Vec<DeclareType> {
 
       export_name_decl.specifiers.iter().for_each(|specifier| {
         match specifier {
-          // todo
           ExportSpecifier::Named(named_specifier) => {
             if let Some(exported) = &named_specifier.exported {
               specifiers.push(SimpleExportSpecifier::NamedExport(
@@ -161,8 +160,8 @@ pub fn extract_module_imports(module: &mut Module) -> Vec<DeclareType> {
           }
           ExportSpecifier::Default(default_specifier) => {
             //todo: swc does not support export x from 'xx'
-            specifiers.push(SimpleExportSpecifier::DefaultImport(DefaultImportName {
-              local: Some(default_specifier.exported.to_string()),
+            specifiers.push(SimpleExportSpecifier::DefaultImport(ExportDefaultName {
+              exported: default_specifier.exported.to_string(),
             }));
           }
           // eg export * as foo from 'bar'

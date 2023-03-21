@@ -107,9 +107,15 @@ const TEST_TABLE = [
   ],
 ] as const;
 
+// ts doesn't allow this
+// in swc js, need to turn on this by
 test.skip('export x from "a"', () => {
-  // swc auto support yet
-  fail();
+  try {
+    const json = parseCode(`export x from "a"`);
+  } catch (e) {
+    console.log(e);
+    fail(e);
+  }
 })
 
 test.skip('export type * from "a"', () => {

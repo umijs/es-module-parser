@@ -30,7 +30,7 @@
   "scripts": {
     "artifacts": "napi artifacts",
     "build": "napi build --platform --release --dts _napi_generated_index.d.ts",
-    "build:debug": "napi build --platform",
+    "build:debug": "napi build --platform --dts _napi_generated_index.d.ts",
     "prepublishOnly": "napi prepublish -t npm",
     "test": "jest --forceExit --passWithNoTests",
     "test:dev": "npm run build:debug && npm run test",
