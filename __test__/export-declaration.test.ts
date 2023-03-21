@@ -104,10 +104,10 @@ const TEST_TABLE = [
       "start": expect.any(Number),
       "end": expect.any(Number),
     }
-  ]
+  ],
 ] as const;
 
-test.skip('export default from "a"', () => {
+test.skip('export x from "a"', () => {
   // swc auto support yet
   fail();
 })

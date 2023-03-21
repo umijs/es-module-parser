@@ -1,7 +1,7 @@
 use crate::dynamic_import_visitor::DynamicImportVisitor;
 use crate::types::{
   DefaultImportName, ExportNamespaceSpecifier, NamedImportName, NamespaceName,
-  SimpleImportSpecifier,
+  SimpleExportSpecifier, SimpleImportSpecifier,
 };
 use serde::{Deserialize, Serialize};
 use swc_common::Span;
@@ -37,6 +37,7 @@ enum DeclareKind {
 pub struct SimpleImportDecl {
   source: String,
   specifiers: Vec<SimpleImportSpecifier>,
+  #[serde(rename = "importKind")]
   import_kind: DeclareKind,
   start: u32,
   end: u32,
@@ -52,7 +53,7 @@ pub struct DynamicImportDecl {
 #[derive(Serialize, Deserialize)]
 pub struct ExportNamedDeclaration {
   source: String,
-  specifiers: Vec<SimpleImportSpecifier>,
+  specifiers: Vec<SimpleExportSpecifier>,
   #[serde(rename = "exportKind")]
   export_kind: DeclareKind,
   start: u32,
@@ -135,14 +136,14 @@ pub fn extract_module_imports(module: &mut Module) -> Vec<DeclareType> {
 
   fn handle_module_export_with_name(export_name_decl: &NamedExport, all: &mut Vec<DeclareType>) {
     if let Some(str) = &export_name_decl.src {
-      let mut specifiers: Vec<SimpleImportSpecifier> = Vec::new();
+      let mut specifiers: Vec<SimpleExportSpecifier> = Vec::new();
 
       export_name_decl.specifiers.iter().for_each(|specifier| {
         match specifier {
           // todo
           ExportSpecifier::Named(named_specifier) => {
             if let Some(exported) = &named_specifier.exported {
-              specifiers.push(SimpleImportSpecifier::NamedExport(
+              specifiers.push(SimpleExportSpecifier::NamedExport(
                 crate::types::NamedExportName {
                   exported: specifier_name(exported).to_string(),
                   local: specifier_name(&named_specifier.orig).to_string(),
@@ -151,7 +152,7 @@ pub fn extract_module_imports(module: &mut Module) -> Vec<DeclareType> {
               return;
             }
 
-            specifiers.push(SimpleImportSpecifier::NamedExport(
+            specifiers.push(SimpleExportSpecifier::NamedExport(
               crate::types::NamedExportName {
                 local: specifier_name(&named_specifier.orig).to_string(),
                 exported: specifier_name(&named_specifier.orig).to_string(),
@@ -159,13 +160,14 @@ pub fn extract_module_imports(module: &mut Module) -> Vec<DeclareType> {
             ));
           }
           ExportSpecifier::Default(default_specifier) => {
-            specifiers.push(SimpleImportSpecifier::DefaultImport(DefaultImportName {
+            //todo: swc does not support export x from 'xx'
+            specifiers.push(SimpleExportSpecifier::DefaultImport(DefaultImportName {
               local: Some(default_specifier.exported.to_string()),
             }));
           }
           // eg export * as foo from 'bar'
           ExportSpecifier::Namespace(namespace_specifier) => {
-            specifiers.push(SimpleImportSpecifier::NamespaceExport(
+            specifiers.push(SimpleExportSpecifier::NamespaceExport(
               ExportNamespaceSpecifier {
                 exported: specifier_name(&namespace_specifier.name),
               },

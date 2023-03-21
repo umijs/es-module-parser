@@ -31,7 +31,7 @@ const TEST_TABLE = [
       ],
       "start": expect.any(Number),
       "end": expect.any(Number),
-      "import_kind": "value",
+      "importKind": "value",
     }
   ],
   [
@@ -45,7 +45,7 @@ const TEST_TABLE = [
           "type": "ImportNamespaceSpecifier"
         }
       ],
-      "import_kind": "value",
+      "importKind": "value",
       "start": expect.any(Number),
       "end": expect.any(Number),
     }
@@ -54,7 +54,7 @@ const TEST_TABLE = [
     `import { e } from "a";`,
     {
       "type": "ImportDeclaration",
-      "import_kind": "value",
+      "importKind": "value",
       "source": "a",
       "specifiers": [
         {
@@ -71,7 +71,7 @@ const TEST_TABLE = [
     `import { e as f} from "a";`,
     {
       "type": "ImportDeclaration",
-      "import_kind": "value",
+      "importKind": "value",
       "source": "a",
       "specifiers": [
         {
@@ -88,7 +88,7 @@ const TEST_TABLE = [
     `import { default as f} from "a";`,
     {
       "type": "ImportDeclaration",
-      "import_kind": "value",
+      "importKind": "value",
       "source": "a",
       "specifiers": [
         {
@@ -105,7 +105,7 @@ const TEST_TABLE = [
     `import { "spaced name" as alias } from "a";`,
     {
       "type": "ImportDeclaration",
-      "import_kind": "value",
+      "importKind": "value",
       "source": "a",
       "specifiers": [
         {
@@ -122,7 +122,7 @@ const TEST_TABLE = [
   [`import d, { n } from "a";`,
     {
       "type": "ImportDeclaration",
-      "import_kind": "value",
+      "importKind": "value",
       "source": "a",
       "specifiers": [
         {
@@ -154,7 +154,7 @@ const TEST_TABLE = [
           "type": "ImportNamespaceSpecifier"
         }
       ],
-      "import_kind": "value",
+      "importKind": "value",
       "start": 1,
       "end": 28,
     }
@@ -165,7 +165,7 @@ const TEST_TABLE = [
     {
       "type": "ImportDeclaration",
       "source": "a",
-      "import_kind": "value",
+      "importKind": "value",
       "specifiers": [],
       "start": expect.any(Number),
       "end": expect.any(Number),
