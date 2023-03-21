@@ -1,5 +1,54 @@
 use serde::{Deserialize, Serialize};
 
+#[derive(Serialize, Deserialize)]
+#[serde(tag = "type")]
+pub enum DeclareType {
+  #[serde(rename = "ImportDeclaration")]
+  Import(SimpleImportDeclaration),
+
+  #[serde(rename = "DynamicImport")]
+  DynamicImport(DynamicImportDeclaration),
+
+  #[serde(rename = "ExportNamedDeclaration")]
+  NamedExport(ExportNamedDeclaration),
+  #[serde(rename = "ExportAllDeclaration")]
+  AllExport(ExportAllDeclaration),
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct SimpleImportDeclaration {
+  pub source: String,
+  pub specifiers: Vec<SimpleImportSpecifier>,
+  #[serde(rename = "importKind")]
+  pub import_kind: DeclareKind,
+  pub start: u32,
+  pub end: u32,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct DynamicImportDeclaration {
+  pub source: String,
+  pub start: u32,
+  pub end: u32,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct ExportNamedDeclaration {
+  pub source: String,
+  pub specifiers: Vec<SimpleExportSpecifier>,
+  #[serde(rename = "exportKind")]
+  pub export_kind: DeclareKind,
+  pub start: u32,
+  pub end: u32,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct ExportAllDeclaration {
+  pub source: String,
+  pub start: u32,
+  pub end: u32,
+}
+
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(tag = "type")]
 pub enum SimpleImportSpecifier {
@@ -11,25 +60,23 @@ pub enum SimpleImportSpecifier {
 
   #[serde(rename = "ImportNamespaceSpecifier")]
   NamespaceImport(NamespaceName),
-
-  DynamicImport(DynamicName),
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(tag = "type")]
 pub enum SimpleExportSpecifier {
   #[serde(rename = "ExportDefaultSpecifier")]
-  DefaultImport(ExportDefaultName),
+  DefaultExport(ExportDefaultName),
 
   #[serde(rename = "ExportNamespaceSpecifier")]
   NamespaceExport(ExportNamespaceSpecifier),
 
   #[serde(rename = "ExportSpecifier")]
-  NamedExport(NamedExportName),
+  NamedExport(NamedExportNameSpecifier),
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct NamedExportName {
+pub struct NamedExportNameSpecifier {
   pub exported: String,
   pub local: String,
 }
@@ -39,8 +86,6 @@ pub struct ExportNamespaceSpecifier {
   pub exported: String,
 }
 
-// import * as x from 'y'
-// export * from 'y'  Option case
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct NamespaceName {
   pub local: Option<String>,
@@ -49,9 +94,6 @@ pub struct NamespaceName {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct DynamicName {}
 
-// import x from 'y'
-// export x from 'y'
-// export { default } from 'y'
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ImportDefaultName {
   pub local: Option<String>,
@@ -69,14 +111,9 @@ pub struct NamedImportName {
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct ImporteeName {
+pub enum DeclareKind {
+  #[serde(rename = "value")]
+  Value,
   #[serde(rename = "type")]
-  pub import_type: String,
-  pub name: Option<String>,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct Imports {
-  pub source: String,
-  pub imports: Vec<SimpleImportSpecifier>,
+  Type,
 }

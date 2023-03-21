@@ -1,4 +1,4 @@
-use crate::extract_imports::{DeclareType, DynamicImportDecl};
+use crate::types::{DeclareType, DynamicImportDeclaration};
 use swc_ecma_ast::{CallExpr, Expr, Lit};
 use swc_ecma_visit::{Visit, VisitWith};
 
@@ -16,7 +16,7 @@ impl Visit for DynamicImportVisitor<'_> {
         if let Expr::Lit(Lit::Str(import_arg)) = expr {
           self
             .hashset
-            .push(DeclareType::DynamicImport(DynamicImportDecl {
+            .push(DeclareType::DynamicImport(DynamicImportDeclaration {
               source: import_arg.value.to_string(),
               start: import_arg.span.lo.0 as u32,
               end: import_arg.span.hi.0 as u32,

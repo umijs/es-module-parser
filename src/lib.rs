@@ -5,8 +5,9 @@ mod extract_imports;
 mod module_utils;
 mod types;
 
-use crate::extract_imports::{extract_module_imports, DeclareType};
+use crate::extract_imports::extract_module_imports;
 use crate::module_utils::{parse_code_to_module, parse_file_to_module};
+use crate::types::DeclareType;
 use futures;
 use napi::anyhow::anyhow;
 use napi::bindgen_prelude::*;
