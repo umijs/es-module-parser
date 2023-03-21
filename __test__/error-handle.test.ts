@@ -21,6 +21,10 @@ test('parse file within bad code', async () => {
   }
 })
 
+test('parse empty list', async () => {
+    await parseFiles([])
+})
+
 test("parsr bad code ", () => {
   try {
     parseCode("import x 'y'")
