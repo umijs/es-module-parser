@@ -44,5 +44,5 @@ type SimpleExportSpecifier = {
     local: string;
 };
 export declare function parseCode(code: string): Declaration[];
-export declare function parseFiles(files: string[]): Promise<Declaration[]>;
+export declare function parseFiles(files: string[]): Promise<Record<string,Declaration[]>>;
 export {};
