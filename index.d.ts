@@ -1,48 +1,54 @@
 type DeclareKind = 'value' | 'type';
 type Declaration = {
-    type: 'ImportDeclaration';
-    source: string;
-    specifiers: Array<SimpleImportSpecifier>;
-    importKind: DeclareKind;
-    start: number;
-    end: number;
+  type: 'ImportDeclaration';
+  source: string;
+  specifiers: Array<SimpleImportSpecifier>;
+  importKind: DeclareKind;
+  start: number;
+  end: number;
 } | {
-    type: 'DynamicImport';
-    source: string;
-    start: number;
-    end: number;
+  type: 'DynamicImport';
+  source: string;
+  start: number;
+  end: number;
 } | {
-    type: 'ExportNamedDeclaration';
-    source: string;
-    specifiers: Array<SimpleExportSpecifier>;
-    exportKind: DeclareKind;
-    start: number;
-    end: number;
+  type: 'ExportNamedDeclaration';
+  source: string;
+  specifiers: Array<SimpleExportSpecifier>;
+  exportKind: DeclareKind;
+  start: number;
+  end: number;
 } | {
-    type: 'ExportAllDeclaration';
-    source: string;
-    start: number;
-    end: number;
+  type: 'ExportAllDeclaration';
+  source: string;
+  start: number;
+  end: number;
 };
 type SimpleImportSpecifier = {
-    type: 'ImportDefaultSpecifier';
-    local: string;
+  type: 'ImportDefaultSpecifier';
+  local: string;
 } | {
-    type: 'ImportNamespaceSpecifier';
-    local: string;
-    imported: string;
+  type: 'ImportNamespaceSpecifier';
+  local: string;
+  imported: string;
 } | {
-    type: 'ImportNamespaceSpecifier';
-    local?: string;
+  type: 'ImportNamespaceSpecifier';
+  local?: string;
 };
 type SimpleExportSpecifier = {
-    type: 'ExportNamespaceSpecifier';
-    exported?: string;
+  type: 'ExportDefaultSpecifier';
+  exported: string;
 } | {
-    type: 'ExportSpecifier';
-    exported: string;
-    local: string;
+  type: 'ExportNamespaceSpecifier';
+  exported?: string;
+} | {
+  type: 'ExportSpecifier';
+  exported: string;
+  local: string;
 };
+
 export declare function parseCode(code: string): Declaration[];
-export declare function parseFiles(files: string[]): Promise<Record<string,Declaration[]>>;
+
+export declare function parseFiles(files: string[]): Promise<Record<string, Declaration[]>>;
+
 export {};
