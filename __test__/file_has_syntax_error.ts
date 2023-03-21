@@ -1,0 +1,2 @@
+// @ts-error
+import wrong
