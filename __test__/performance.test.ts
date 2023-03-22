@@ -2,15 +2,15 @@
 
 import {readFileSync} from 'fs'
 import {join} from "path";
+// @ts-ignore
 import {parseFiles, parseFilesJsonStr} from "../index";
 
 let files: string[] = [];
 
 try {
-  files = readFileSync(join(__dirname, 'list.txt'), 'utf-8').trim().split('\n');
+  files = readFileSync(join(__dirname, 'list.txt'), 'utf-8').trim().split('\n')
 } catch (e) {
 }
-
 
 if (files.length === 0) {
   console.error('if you want to run performance test, put files list in __test__/list.txt')
@@ -23,7 +23,7 @@ if (files.length === 0) {
     const duration = Date.now() - start;
 
     console.log(
-      `[JSON] parse ${files.length} files, cost ${duration}ms, average ${duration / files.length}ms per file`
+      `[JSONString] parse ${files.length} files, cost ${duration}ms, average ${duration / files.length}ms per file`
     )
   })
 
@@ -33,10 +33,10 @@ if (files.length === 0) {
     const duration = Date.now() - start;
 
     console.log(
-      `[Object] parse ${files.length} files, cost ${duration}ms, average ${duration / files.length}ms per file`
+      `[  Object  ] parse ${files.length} files, cost ${duration}ms, average ${duration / files.length}ms per file`
     )
   })
 }
 
-it.skip('bypass jest error', () => {
+it('bypass jest error', () => {
 });

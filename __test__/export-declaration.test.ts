@@ -109,13 +109,19 @@ const TEST_TABLE = [
 
 // ts doesn't allow this
 // in swc js, need to turn on this by
-test.skip('export x from "a"', () => {
-  try {
-    const json = parseCode(`export x from "a"`);
-  } catch (e) {
-    console.log(e);
-    fail(e);
-  }
+test('export x from "a"', () => {
+  const imps = parseCode(`export x from "a"`, 'x.js');
+  expect(imps).toEqual(
+    [{
+      "type": "ExportNamedDeclaration",
+      "specifiers": [{"exported": "x", "type": "ExportDefaultSpecifier"}],
+      "exportKind": "value",
+      "source": "a",
+      "start": expect.any(Number),
+      "end": expect.any(Number),
+    }]
+  )
+
 })
 
 test.skip('export type * from "a"', () => {
