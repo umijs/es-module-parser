@@ -41,18 +41,21 @@ pub fn parse_file_to_module(file_path: &String) -> Result<Module> {
   Ok(module)
 }
 
-pub fn parse_code_to_module(code: String) -> Result<Module> {
+pub fn parse_code_to_module(code: String, file_name: Option<String>) -> Result<Module> {
   let cm: Lrc<SourceMap> = Default::default();
   let handler = Handler::with_tty_emitter(ColorConfig::Auto, true, false, Some(cm.clone()));
 
-  let fm = cm.new_source_file(FileName::Custom("_.tsx".to_string()), code);
+  let default_file_name = "_.tsx".to_string();
+
+  let file_name: String = if let Some(path) = file_name {
+    path
+  } else {
+    default_file_name.clone()
+  };
+
+  let fm = cm.new_source_file(FileName::Custom(default_file_name), code);
   let lexer = Lexer::new(
-    // We want to parse ecmascript
-    Syntax::Typescript(TsConfig {
-      tsx: true,
-      ..Default::default()
-    }),
-    // EsVersion defaults to es5
+    path_to_syntax(Path::new(&file_name)),
     Default::default(),
     StringInput::from(&*fm),
     None,

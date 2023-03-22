@@ -105,7 +105,7 @@ pub fn extract_module_imports(module: &mut Module) -> Vec<DeclareType> {
           ExportSpecifier::Default(default_specifier) => {
             //todo: swc does not support export x from 'xx'
             specifiers.push(SimpleExportSpecifier::DefaultExport(ExportDefaultName {
-              exported: default_specifier.exported.to_string(),
+              exported: default_specifier.exported.sym.to_string(),
             }));
           }
           // eg export * as foo from 'bar'

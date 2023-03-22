@@ -18,8 +18,8 @@ use std::collections::HashMap;
 use std::sync::Arc;
 
 #[napi]
-fn parse_code(code: String) -> Result<Value> {
-  let import_map = extract_from_code(code)?;
+fn parse_code(code: String, file_name: Option<String>) -> Result<Value> {
+  let import_map = extract_from_code(code, file_name)?;
 
   let value =
     serde_json::to_value(&import_map).map_err(|_| anyhow!("serialize import declares error"))?;
@@ -88,8 +88,8 @@ async fn parse_files_async(files: Vec<String>) -> Result<HashMap<String, Vec<Dec
   Ok(file_imports)
 }
 
-fn extract_from_code(code: String) -> Result<Vec<DeclareType>> {
-  let mut module = parse_code_to_module(code)?;
+fn extract_from_code(code: String, file_name: Option<String>) -> Result<Vec<DeclareType>> {
+  let mut module = parse_code_to_module(code, file_name)?;
   Ok(extract_module_imports(&mut module))
 }
 
