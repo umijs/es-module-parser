@@ -1,5 +1,6 @@
 use napi::anyhow::{anyhow, Context};
 use napi::bindgen_prelude::*;
+use std::ffi::OsStr;
 use std::path::Path;
 use swc_common::errors::{ColorConfig, Handler};
 use swc_common::input::StringInput;
@@ -7,22 +8,19 @@ use swc_common::sync::Lrc;
 use swc_common::{FileName, SourceMap};
 use swc_ecma_ast::Module;
 use swc_ecma_parser::lexer::Lexer;
-use swc_ecma_parser::{Parser, Syntax, TsConfig};
+use swc_ecma_parser::{EsConfig, Parser, Syntax, TsConfig};
 
 pub fn parse_file_to_module(file_path: &String) -> Result<Module> {
   let cm: Lrc<SourceMap> = Default::default();
   let handler = Handler::with_tty_emitter(ColorConfig::Auto, true, false, Some(cm.clone()));
+  let path = Path::new(file_path.as_str());
 
   let fm = cm
-    .load_file(Path::new(file_path.as_str()))
+    .load_file(path)
     .context(format!("Cant load file: {}", file_path))?;
 
   let lexer = Lexer::new(
-    Syntax::Typescript(TsConfig {
-      tsx: true,
-      decorators: true,
-      ..Default::default()
-    }),
+    path_to_syntax(path),
     Default::default(),
     StringInput::from(&*fm),
     None,
@@ -72,4 +70,37 @@ pub fn parse_code_to_module(code: String) -> Result<Module> {
   })?;
 
   Ok(m)
+}
+
+fn path_to_syntax(p: &Path) -> Syntax {
+  let default_syntax = Syntax::Typescript(TsConfig {
+    tsx: true,
+    decorators: true,
+    ..Default::default()
+  });
+
+  if let Some(ext) = p.extension().and_then(OsStr::to_str) {
+    match ext {
+      "js" | "jsx" => Syntax::Es(EsConfig {
+        decorators: true,
+        decorators_before_export: true,
+        jsx: true,
+        export_default_from: true,
+        ..Default::default()
+      }),
+      "ts" => Syntax::Typescript(TsConfig {
+        tsx: false,
+        decorators: true,
+        ..Default::default()
+      }),
+      "tsx" => Syntax::Typescript(TsConfig {
+        tsx: true,
+        decorators: true,
+        ..Default::default()
+      }),
+      _ => default_syntax,
+    }
+  } else {
+    default_syntax
+  }
 }
