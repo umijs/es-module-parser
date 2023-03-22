@@ -1,5 +1,4 @@
-/// reference: jest
-
+import { expect, test } from 'vitest'
 import {readFileSync} from 'fs'
 import {join} from "path";
 // @ts-ignore
@@ -38,5 +37,5 @@ if (files.length === 0) {
   })
 }
 
-it('bypass jest error', () => {
+test.skip('bypass jest error', () => {
 });

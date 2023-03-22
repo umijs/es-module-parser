@@ -1,3 +1,4 @@
+import {expect, test} from 'vitest'
 import {parseCode, parseFiles} from '../index.js'
 
 /*
@@ -14,25 +15,26 @@ export { default as name1 } from "module-name-15";`));
 const TEST_TABLE = [
   [
     'const x = import("mfsu")',
-    {
+    [{
       "source": "mfsu",
       "type": "DynamicImport",
       "start": expect.any(Number),
       "end": expect.any(Number),
-    }
+    }]
   ],
   [
     'const x = import("mfsu",{type: "function"})',
-    {
+    [{
       "source": "mfsu",
       "type": "DynamicImport",
       "start": expect.any(Number),
       "end": expect.any(Number),
-    }
+    }]
   ],
   [
     'const x = import("a"+"b")',
     // ignore non-string literal import
+    []
   ]
 ] as const;
 
@@ -40,8 +42,8 @@ const TEST_TABLE = [
 for (let [code, expectObj] of TEST_TABLE) {
   test(code, () => {
     const json = parseCode(code);
-    expect(json).toEqual([
+    expect(json).toEqual(
       expectObj
-    ])
+    )
   })
 }

@@ -1,4 +1,4 @@
-/// reference: jest
+import { expect, test } from 'vitest'
 import {parseCode, parseFiles} from '../index.js'
 
 /*

@@ -22,12 +22,10 @@
   "license": "MIT",
   "devDependencies": {
     "@napi-rs/cli": "^2.14.8",
-    "@types/jest": "^29.5.0",
-    "@umijs/test": "^4.0.61",
-    "jest": "^29.5.0",
     "prettier": "^2.8.4",
     "prettier-plugin-organize-imports": "^3.2.2",
-    "prettier-plugin-packagejson": "^2.4.3"
+    "prettier-plugin-packagejson": "^2.4.3",
+    "vitest": "^0.29.7"
   },
   "ava": {
     "timeout": "3m"
@@ -40,7 +38,7 @@
     "build": "napi build --platform --release --dts _napi_generated_index.d.ts",
     "build:debug": "napi build --platform --dts _napi_generated_index.d.ts",
     "prepublishOnly": "napi prepublish -t npm",
-    "test": "jest --forceExit --passWithNoTests",
+    "test": "vitest run --passWithNoTests",
     "test:dev": "npm run build:debug && npm run test",
     "universal": "napi universal",
     "version": "napi version"
