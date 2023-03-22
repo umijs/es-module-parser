@@ -1,5 +1,5 @@
-type DeclareKind = 'value' | 'type';
-type Declaration = {
+export type DeclareKind = 'value' | 'type';
+export type Declaration = {
   type: 'ImportDeclaration';
   source: string;
   specifiers: Array<SimpleImportSpecifier>;
