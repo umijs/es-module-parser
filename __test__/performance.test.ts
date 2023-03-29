@@ -2,7 +2,7 @@ import {test} from 'vitest'
 import {readFileSync} from 'fs'
 import {join} from "path";
 // @ts-ignore
-import {parseFiles, parseFilesTokio8, parseFilesSync, parseFilesJsonStr} from "../index";
+import {parseFiles, parseFilesSync,} from "../index";
 
 let files: string[] = [];
 

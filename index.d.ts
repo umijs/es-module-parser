@@ -51,4 +51,6 @@ export declare function parseCode(code: string, fileName?: string | undefined | 
 
 export declare function parseFiles(files: string[]): Promise<Record<string, Declaration[]>>;
 
+export declare function parseFilesSync(files: string[]): Record<string, Declaration[]>;
+
 export {};
