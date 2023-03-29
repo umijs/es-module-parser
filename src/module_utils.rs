@@ -84,7 +84,7 @@ fn path_to_syntax(p: &Path) -> Syntax {
 
   if let Some(ext) = p.extension().and_then(OsStr::to_str) {
     match ext {
-      "js" | "jsx" => Syntax::Es(EsConfig {
+      "js" | "jsx" | "mjs" => Syntax::Es(EsConfig {
         decorators: true,
         decorators_before_export: true,
         jsx: true,
