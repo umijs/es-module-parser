@@ -1,8 +1,8 @@
-import { expect, test } from 'vitest'
+import {test} from 'vitest'
 import {readFileSync} from 'fs'
 import {join} from "path";
 // @ts-ignore
-import {parseFiles, parseFilesJsonStr} from "../index";
+import {parseFiles, parseFilesTokio8, parseFilesSync, parseFilesJsonStr} from "../index";
 
 let files: string[] = [];
 
@@ -16,23 +16,23 @@ if (files.length === 0) {
   console.error('a file path per line')
 } else {
 
-  test('performance [JSON]', async () => {
+  test('performance [sync]', async () => {
     const start = Date.now()
-    await parseFilesJsonStr(files)
+    parseFilesSync(files)
     const duration = Date.now() - start;
 
     console.log(
-      `[JSONString] parse ${files.length} files, cost ${duration}ms, average ${duration / files.length}ms per file`
+      `[sync] parse ${files.length} files, cost ${duration}ms, average ${duration / files.length}ms per file`
     )
   })
 
-  test('performance [Object]', async () => {
+  test('performance [async]', async () => {
     const start = Date.now()
     await parseFiles(files)
     const duration = Date.now() - start;
 
     console.log(
-      `[  Object  ] parse ${files.length} files, cost ${duration}ms, average ${duration / files.length}ms per file`
+      `[async] parse ${files.length} files, cost ${duration}ms, average ${duration / files.length}ms per file`
     )
   })
 }

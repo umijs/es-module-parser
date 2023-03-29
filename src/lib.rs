@@ -8,14 +8,12 @@ mod types;
 use crate::extract_imports::extract_module_imports;
 use crate::module_utils::{parse_code_to_module, parse_file_to_module};
 use crate::types::DeclareType;
-use futures;
 use napi::anyhow::anyhow;
-use napi::bindgen_prelude::*;
-use napi::tokio::{sync::Semaphore, task, task::JoinHandle};
+use napi::Result;
 use napi_derive::napi;
+use rayon::prelude::*;
 use serde_json::Value;
 use std::collections::HashMap;
-use std::sync::Arc;
 
 #[napi]
 fn parse_code(code: String, file_name: Option<String>) -> Result<Value> {
@@ -29,58 +27,40 @@ fn parse_code(code: String, file_name: Option<String>) -> Result<Value> {
 
 #[napi]
 async fn parse_files(files: Vec<String>) -> Result<Value> {
-  let file_imports = parse_files_async(files).await?;
+  let file_imports = parse_files_in_paralle(&files)?;
 
-  let value =
-    serde_json::to_value(&file_imports).map_err(|_| anyhow!("serialize import declares error"))?;
-
-  Ok(value)
+  let val = serde_json::to_value(&file_imports)?;
+  Ok(val)
 }
 
 #[napi]
-async fn parse_files_json_str(files: Vec<String>) -> Result<String> {
-  let file_imports = parse_files_async(files).await?;
+fn parse_files_sync(files: Vec<String>) -> Result<Value> {
+  let file_imports = parse_files_in_paralle(&files)?;
 
-  let json = serde_json::to_string(&file_imports)
-    .map_err(|e| anyhow!("Failed to serialize to json: {}", e))?;
-
-  Ok(json)
+  let val = serde_json::to_value(&file_imports)?;
+  Ok(val)
 }
 
-async fn parse_files_async(files: Vec<String>) -> Result<HashMap<String, Vec<DeclareType>>> {
+fn parse_files_in_paralle(files: &Vec<String>) -> Result<HashMap<String, Vec<DeclareType>>> {
   let mut file_imports: HashMap<String, Vec<DeclareType>> = HashMap::new();
 
-  let semaphore = Arc::new(Semaphore::new(4));
-  let mut handles = Vec::new();
+  let mut results: Vec<(&String, Result<Vec<DeclareType>>)> = Vec::new();
 
-  for file in files {
-    let sc = semaphore.clone();
-    let h: JoinHandle<Result<(String, Vec<DeclareType>)>> = task::spawn(async move {
-      let permit = sc
-        .acquire()
-        .await
-        .map_err(|_e| anyhow!("acquire permit error"))?;
-      let result = extract_from_file(&file).await?;
-      drop(permit);
-      Ok((file, result))
-    });
-    handles.push(h);
-  }
+  files
+    .par_iter()
+    .map(|file| {
+      let result = extract_from_file(&file);
+      (file, result)
+    })
+    .collect_into_vec(&mut results);
 
-  let results = futures::future::join_all(handles).await;
-
-  for result in results {
+  for (file, result) in results {
     match result {
-      Ok(res) => match res {
-        Ok(x) => {
-          file_imports.insert(x.0, x.1);
-        }
-        Err(e) => {
-          return Err(e);
-        }
-      },
-      Err(_) => {
-        return Err(anyhow!("Join Error").into());
+      Ok(res) => {
+        file_imports.insert(file.to_owned(), res);
+      }
+      Err(e) => {
+        return Err(e);
       }
     };
   }
@@ -93,7 +73,7 @@ fn extract_from_code(code: String, file_name: Option<String>) -> Result<Vec<Decl
   Ok(extract_module_imports(&mut module))
 }
 
-async fn extract_from_file(file_name: &String) -> Result<Vec<DeclareType>> {
+fn extract_from_file(file_name: &String) -> Result<Vec<DeclareType>> {
   let mut module = parse_file_to_module(file_name)?;
   let imports = extract_module_imports(&mut module);
   Ok(imports)
