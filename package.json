@@ -38,7 +38,8 @@
     "test": "vitest run --passWithNoTests",
     "test:dev": "npm run build:debug && npm run test",
     "universal": "napi universal",
-    "version": "napi version"
+    "version": "napi version",
+    "tnpm:sync": "node ./scripts/tnpmSync.js"
   },
   "packageManager": "yarn@3.4.1"
 }
